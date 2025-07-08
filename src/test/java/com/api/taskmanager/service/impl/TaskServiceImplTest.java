@@ -141,4 +141,70 @@ public class TaskServiceImplTest {
         verify(repository).findById(1L);
         verify(repository).delete(task);
     }
+
+    @Test
+    void shouldReturnEmptyPageWhenNoTasks() {
+        Pageable pageable = PageRequest.of(0, 10);
+        Page<Task> emptyPage = new PageImpl<>(List.of());
+
+        when(repository.findAll(pageable)).thenReturn(emptyPage);
+
+        Page<TaskResponseDTO> result = service.findAll(pageable);
+
+        assertThat(result.getContent()).isEmpty();
+        verify(repository).findAll(pageable);
+    }
+
+    @Test
+    void shouldThrowWhenUpdateNotFound() {
+        TaskRequestDTO dto = new TaskRequestDTO("Title", "Description test", Status.IN_PROGRESS, LocalDate.now());
+        when(repository.findById(99L)).thenReturn(Optional.empty());
+
+        assertThatThrownBy(() -> service.update(99L, dto))
+                .isInstanceOf(TaskNotFoundException.class)
+                .hasMessageContaining("99");
+
+        verify(repository, never()).save(any());
+    }
+
+    @Test
+    void shouldThrowWhenUpdateStatusNotFound() {
+        TaskStatusUpdateDTO dto = new TaskStatusUpdateDTO(Status.COMPLETED);
+        when(repository.findById(99L)).thenReturn(Optional.empty());
+
+        assertThatThrownBy(() -> service.updateStatus(99L, dto))
+                .isInstanceOf(TaskNotFoundException.class)
+                .hasMessageContaining("99");
+
+        verify(repository, never()).save(any());
+    }
+
+    @Test
+    void shouldThrowWhenDeleteNotFound() {
+        when(repository.findById(99L)).thenReturn(Optional.empty());
+
+        assertThatThrownBy(() -> service.delete(99L))
+                .isInstanceOf(TaskNotFoundException.class)
+                .hasMessageContaining("99");
+
+        verify(repository, never()).delete(any());
+    }
+
+    @Test
+    void shouldUpdateStatusSuccessfully() {
+        TaskStatusUpdateDTO dto = new TaskStatusUpdateDTO(Status.COMPLETED);
+
+        Task existing = new Task();
+        existing.setId(1L);
+        existing.setStatus(Status.IN_PROGRESS);
+
+        when(repository.findById(1L)).thenReturn(Optional.of(existing));
+        when(repository.save(any(Task.class))).thenAnswer(i -> i.getArgument(0));
+
+        TaskResponseDTO response = service.updateStatus(1L, dto);
+
+        assertThat(response.status()).isEqualTo(Status.COMPLETED);
+        verify(repository).save(existing);
+    }
+
 }
