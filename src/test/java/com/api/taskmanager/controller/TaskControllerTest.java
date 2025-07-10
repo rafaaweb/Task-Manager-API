@@ -118,7 +118,7 @@ public class TaskControllerTest {
         TaskRequestDTO requestDTO = new TaskRequestDTO(
                 "Updated Task",
                 "Updated description",
-                Status.COMPLETED,
+                Status.DONE,
                 LocalDate.now().plusDays(5)
         );
 
@@ -136,7 +136,7 @@ public class TaskControllerTest {
             {
               "title": "Updated Task",
               "description": "Updated description",
-              "status": "COMPLETED",
+              "status": "DONE",
               "dueDate": "%s"
             }
             """.formatted(requestDTO.dueDate());
@@ -147,18 +147,18 @@ public class TaskControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(1))
                 .andExpect(jsonPath("$.title").value("Updated Task"))
-                .andExpect(jsonPath("$.status").value("COMPLETED"));
+                .andExpect(jsonPath("$.status").value("DONE"));
     }
 
     @Test
     void shouldUpdateTaskStatus() throws Exception {
-        TaskStatusUpdateDTO statusUpdateDTO = new TaskStatusUpdateDTO(Status.COMPLETED);
+        TaskStatusUpdateDTO statusUpdateDTO = new TaskStatusUpdateDTO(Status.DONE);
 
         TaskResponseDTO responseDTO = new TaskResponseDTO(
                 1L,
                 "Task 1",
                 "Description task 1",
-                Status.COMPLETED,
+                Status.DONE,
                 LocalDate.now().plusDays(1)
         );
 
@@ -166,7 +166,7 @@ public class TaskControllerTest {
 
         String jsonRequest = """
             {
-              "status": "COMPLETED"
+              "status": "DONE"
             }
             """;
 
@@ -175,7 +175,7 @@ public class TaskControllerTest {
                         .content(jsonRequest))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(1))
-                .andExpect(jsonPath("$.status").value("COMPLETED"));
+                .andExpect(jsonPath("$.status").value("DONE"));
     }
 
     @Test

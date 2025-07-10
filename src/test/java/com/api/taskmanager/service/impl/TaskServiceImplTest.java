@@ -95,7 +95,7 @@ public class TaskServiceImplTest {
 
     @Test
     void shouldUpdateTask(){
-        TaskRequestDTO dto = new TaskRequestDTO("Updated title", "Updated description", Status.COMPLETED, LocalDate.now().plusDays(5));
+        TaskRequestDTO dto = new TaskRequestDTO("Updated title", "Updated description", Status.DONE, LocalDate.now().plusDays(5));
 
         Task existing = new Task();
         existing.setId(2L);
@@ -120,7 +120,7 @@ public class TaskServiceImplTest {
 
     @Test
     void shouldUpdateStatus(){
-        TaskStatusUpdateDTO dto = new TaskStatusUpdateDTO(Status.COMPLETED);
+        TaskStatusUpdateDTO dto = new TaskStatusUpdateDTO(Status.DONE);
 
         when(repository.findById(1L)).thenReturn(Optional.of(task));
         when(repository.save(any(Task.class))).thenReturn(task);
@@ -169,7 +169,7 @@ public class TaskServiceImplTest {
 
     @Test
     void shouldThrowWhenUpdateStatusNotFound() {
-        TaskStatusUpdateDTO dto = new TaskStatusUpdateDTO(Status.COMPLETED);
+        TaskStatusUpdateDTO dto = new TaskStatusUpdateDTO(Status.DONE);
         when(repository.findById(99L)).thenReturn(Optional.empty());
 
         assertThatThrownBy(() -> service.updateStatus(99L, dto))
@@ -192,7 +192,7 @@ public class TaskServiceImplTest {
 
     @Test
     void shouldUpdateStatusSuccessfully() {
-        TaskStatusUpdateDTO dto = new TaskStatusUpdateDTO(Status.COMPLETED);
+        TaskStatusUpdateDTO dto = new TaskStatusUpdateDTO(Status.DONE);
 
         Task existing = new Task();
         existing.setId(1L);
@@ -203,7 +203,7 @@ public class TaskServiceImplTest {
 
         TaskResponseDTO response = service.updateStatus(1L, dto);
 
-        assertThat(response.status()).isEqualTo(Status.COMPLETED);
+        assertThat(response.status()).isEqualTo(Status.DONE);
         verify(repository).save(existing);
     }
 
