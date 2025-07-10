@@ -21,6 +21,8 @@ public class TaskController {
 
     @GetMapping
     public Page<TaskResponseDTO> list(Pageable pageable){
+        var off = pageable.getOffset();
+        var size = pageable.getPageSize();
         return service.findAll(pageable);
     }
 

@@ -11,7 +11,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
-import org.springframework.cache.annotation.Caching;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -37,9 +36,6 @@ public class TaskServiceImpl implements TaskService {
     }
 
     @Override
-    @Caching(evict = {
-            @CacheEvict(value = "tasks", allEntries = true)
-    })
     public TaskResponseDTO create(TaskRequestDTO dto) {
         Task task = toEntity(dto);
         Task saved = repository.save(task);
@@ -47,10 +43,7 @@ public class TaskServiceImpl implements TaskService {
     }
 
     @Override
-    @Caching(
-            put = @CachePut(value = "task", key = "#id"),
-            evict = @CacheEvict(value = "tasks", allEntries = true)
-    )
+    @CachePut(value = "taskById", key = "#id")
     public TaskResponseDTO update(Long id, TaskRequestDTO dto) {
         Task existing = repository.findById(id)
                 .orElseThrow(() -> new TaskNotFoundException(id));
@@ -64,10 +57,7 @@ public class TaskServiceImpl implements TaskService {
     }
 
     @Override
-    @Caching(
-            put = @CachePut(value = "task", key = "#id"),
-            evict = @CacheEvict(value = "tasks", allEntries = true)
-    )
+    @CachePut(value = "taskById", key = "#id")
     public TaskResponseDTO updateStatus(Long id, TaskStatusUpdateDTO dto){
         Task existing = repository.findById(id)
                 .orElseThrow(() -> new TaskNotFoundException(id));
@@ -78,10 +68,7 @@ public class TaskServiceImpl implements TaskService {
     }
 
     @Override
-    @Caching(evict = {
-            @CacheEvict(value = "task", key = "#id"),
-            @CacheEvict(value = "tasks", allEntries = true)
-    })
+    @CacheEvict(value = "taskById", key = "#id")
     public void delete(Long id) {
         Task task = repository.findById(id)
                 .orElseThrow(() -> new TaskNotFoundException(id));
