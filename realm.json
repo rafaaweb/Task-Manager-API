@@ -1,0 +1,22 @@
+{
+  "realm": "my-realm",
+  "enabled": true,
+  "id": "my-realm",
+  "clients": [
+    {
+      "clientId": "my-client",
+      "enabled": true,
+      "protocol": "openid-connect",
+      "clientAuthenticatorType": "client-secret",
+      "secret": "cmFmYV9kZXY=",
+      "publicClient": false,
+      "directAccessGrantsEnabled": false,
+      "serviceAccountsEnabled": true,
+      "standardFlowEnabled": false,
+      "implicitFlowEnabled": false,
+      "attributes": {
+        "access.token.lifespan": "3600"
+      }
+    }
+  ]
+}
