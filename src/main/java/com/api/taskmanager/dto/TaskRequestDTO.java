@@ -1,6 +1,5 @@
 package com.api.taskmanager.dto;
 
-import com.api.taskmanager.model.Status;
 import jakarta.validation.constraints.FutureOrPresent;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -13,9 +12,6 @@ public record TaskRequestDTO(
 
     @NotBlank(message = "Description cannot be empty")
     String description,
-
-    @NotNull(message = "The status must not be null")
-    Status status,
 
     @NotNull(message = "The Date must not be null")
     @FutureOrPresent
