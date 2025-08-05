@@ -2,7 +2,6 @@ package com.api.taskmanager.service.impl;
 
 import com.api.taskmanager.dto.TaskRequestDTO;
 import com.api.taskmanager.dto.TaskResponseDTO;
-import com.api.taskmanager.dto.TaskStatusUpdateDTO;
 import com.api.taskmanager.exception.TaskNotFoundException;
 import com.api.taskmanager.model.Status;
 import com.api.taskmanager.model.Task;

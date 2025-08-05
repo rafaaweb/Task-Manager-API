@@ -32,7 +32,7 @@ public class GlobalExceptionHandler {
                 .collect(java.util.stream.Collectors.toMap(
                         FieldError::getField,
                         FieldError::getDefaultMessage,
-                        (msg1, msg2) -> msg1)); // evitar conflito se dois campos repetirem
+                        (msg1, msg2) -> msg1));
 
         problem.setProperty("errors", fieldErrors);
         return problem;

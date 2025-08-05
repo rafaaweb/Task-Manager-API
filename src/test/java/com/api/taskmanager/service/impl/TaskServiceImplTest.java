@@ -81,7 +81,7 @@ public class TaskServiceImplTest {
 
     @Test
     void shouldCreateTask(){
-        TaskRequestDTO dto = new TaskRequestDTO("Title", "Description test", Status.IN_PROGRESS, LocalDate.now());
+        TaskRequestDTO dto = new TaskRequestDTO("Title", "Description test", LocalDate.now());
         when(repository.save(any(Task.class)))
                 .thenAnswer(invocation -> invocation.getArgument(0));
 
@@ -95,7 +95,7 @@ public class TaskServiceImplTest {
 
     @Test
     void shouldUpdateTask(){
-        TaskRequestDTO dto = new TaskRequestDTO("Updated title", "Updated description", Status.DONE, LocalDate.now().plusDays(5));
+        TaskRequestDTO dto = new TaskRequestDTO("Updated title", "Updated description",LocalDate.now().plusDays(5));
 
         Task existing = new Task();
         existing.setId(2L);
@@ -112,24 +112,9 @@ public class TaskServiceImplTest {
 
         assertThat(response.title()).isEqualTo(dto.title());
         assertThat(response.description()).isEqualTo(dto.description());
-        assertThat(response.status()).isEqualTo(dto.status());
         assertThat(response.dueDate()).isEqualTo(dto.dueDate());
         verify(repository).findById(2L);
         verify(repository).save(any(Task.class));
-    }
-
-    @Test
-    void shouldUpdateStatus(){
-        TaskStatusUpdateDTO dto = new TaskStatusUpdateDTO(Status.DONE);
-
-        when(repository.findById(1L)).thenReturn(Optional.of(task));
-        when(repository.save(any(Task.class))).thenReturn(task);
-
-        TaskResponseDTO response = service.updateStatus(1L, dto);
-
-        assertThat(response.status()).isEqualTo(dto.status());
-        verify(repository).findById(1L);
-        verify(repository).save(task);
     }
 
     @Test
@@ -157,22 +142,10 @@ public class TaskServiceImplTest {
 
     @Test
     void shouldThrowWhenUpdateNotFound() {
-        TaskRequestDTO dto = new TaskRequestDTO("Title", "Description test", Status.IN_PROGRESS, LocalDate.now());
+        TaskRequestDTO dto = new TaskRequestDTO("Title", "Description test", LocalDate.now());
         when(repository.findById(99L)).thenReturn(Optional.empty());
 
         assertThatThrownBy(() -> service.update(99L, dto))
-                .isInstanceOf(TaskNotFoundException.class)
-                .hasMessageContaining("99");
-
-        verify(repository, never()).save(any());
-    }
-
-    @Test
-    void shouldThrowWhenUpdateStatusNotFound() {
-        TaskStatusUpdateDTO dto = new TaskStatusUpdateDTO(Status.DONE);
-        when(repository.findById(99L)).thenReturn(Optional.empty());
-
-        assertThatThrownBy(() -> service.updateStatus(99L, dto))
                 .isInstanceOf(TaskNotFoundException.class)
                 .hasMessageContaining("99");
 
@@ -190,21 +163,5 @@ public class TaskServiceImplTest {
         verify(repository, never()).delete(any());
     }
 
-    @Test
-    void shouldUpdateStatusSuccessfully() {
-        TaskStatusUpdateDTO dto = new TaskStatusUpdateDTO(Status.DONE);
-
-        Task existing = new Task();
-        existing.setId(1L);
-        existing.setStatus(Status.IN_PROGRESS);
-
-        when(repository.findById(1L)).thenReturn(Optional.of(existing));
-        when(repository.save(any(Task.class))).thenAnswer(i -> i.getArgument(0));
-
-        TaskResponseDTO response = service.updateStatus(1L, dto);
-
-        assertThat(response.status()).isEqualTo(Status.DONE);
-        verify(repository).save(existing);
-    }
 
 }
